@@ -1,6 +1,6 @@
 # Curso Completo de Rotas em PHP: Do Simples ao Avançado
 
-Bem-vindo ao curso mais completo e didático de rotas em PHP! Aqui você vai aprender desde o conceito mais básico até técnicas avançadas, com exemplos práticos, setas, comentários, exercícios, imagens ilustrativas e explicações detalhadas. Ideal para quem está começando ou quer dominar rotas em aplicações PHP.
+Bem-vindo ao curso mais fácil e didático de rotas em PHP! Aqui você aprende do zero, com exemplos simples, desenhos feitos com texto (ASCII art), exercícios e explicações para quem nunca programou.
 
 ---
 
@@ -27,13 +27,15 @@ Exemplo real:
 - Quando você acessa `https://meusite.com/sobre` ⟶ a rota é `/sobre`
 - Quando acessa `https://meusite.com/contato` ⟶ a rota é `/contato`
 
-**Resumo visual:**
-![Exemplo de rota](https://i.imgur.com/0y0y0y0.png)
+**Resumo visual (desenho):**
 
 ```
-URL do navegador: https://meusite.com/sobre
-                        ↑
-                 Rota: /sobre
++-------------------------------+
+| https://meusite.com/sobre     |
++-------------------------------+
+                |
+                v
+           [ /sobre ]
 ```
 
 - **Rota**: Caminho da URL (ex: `/contato`)
@@ -53,11 +55,11 @@ Vamos criar um arquivo chamado `index.php`:
 <?php
 // Pega o caminho da URL acessada
 if ($_SERVER['REQUEST_URI'] === '/sobre') {
-    echo 'Página Sobre'; // ⟵ Mostra "Página Sobre" se acessar /sobre
+    echo 'Página Sobre'; // Mostra "Página Sobre" se acessar /sobre
 } else if ($_SERVER['REQUEST_URI'] === '/contato') {
-    echo 'Página Contato'; // ⟵ Mostra "Página Contato" se acessar /contato
+    echo 'Página Contato'; // Mostra "Página Contato" se acessar /contato
 } else {
-    echo 'Página Inicial'; // ⟵ Qualquer outro caminho mostra "Página Inicial"
+    echo 'Página Inicial'; // Qualquer outro caminho mostra "Página Inicial"
 }
 ```
 
@@ -66,7 +68,24 @@ if ($_SERVER['REQUEST_URI'] === '/sobre') {
 - Se acessar `http://localhost/contato` ⟶ aparece: `Página Contato`
 - Qualquer outro endereço ⟶ aparece: `Página Inicial`
 
-![Fluxograma simples de rotas](https://i.imgur.com/1Q9Z1Z1.png)
+**Desenho do fluxo:**
+
+```
+[ Você digita /sobre ]
+          |
+          v
+   [ Página Sobre ]
+
+[ Você digita /contato ]
+          |
+          v
+   [ Página Contato ]
+
+[ Qualquer outro caminho ]
+          |
+          v
+   [ Página Inicial ]
+```
 
 ### Exercício 2
 - Crie um arquivo `index.php` e teste as URLs `/`, `/sobre` e `/contato` no seu navegador local.
@@ -83,7 +102,7 @@ E se quisermos acessar `/usuario/123` e mostrar o usuário 123?
 $url = $_SERVER['REQUEST_URI'];
 // Verifica se a URL tem o formato /usuario/algum-numero
 if (preg_match('#^/usuario/(\d+)$#', $url, $matches)) {
-    echo 'Usuário ID: ' . $matches[1]; // ⟵ Mostra o ID capturado
+    echo 'Usuário ID: ' . $matches[1]; // Mostra o ID capturado
 } else {
     echo 'Página não encontrada';
 }
@@ -93,13 +112,18 @@ if (preg_match('#^/usuario/(\d+)$#', $url, $matches)) {
 - Acessando `http://localhost/usuario/42` ⟶ aparece: `Usuário ID: 42`
 - Acessando `http://localhost/usuario/abc` ⟶ aparece: `Página não encontrada`
 
-**Seta visual:**
-![Parâmetro dinâmico](https://i.imgur.com/2X2X2X2.png)
+**Desenho explicativo:**
 
 ```
-URL: /usuario/42
-         ↑
-     Parâmetro dinâmico (ID)
+[ Você digita /usuario/42 ]
+          |
+          v
+   [ Usuário ID: 42 ]
+
+[ Você digita /usuario/abc ]
+          |
+          v
+   [ Página não encontrada ]
 ```
 
 ### Exercício 3
@@ -116,7 +140,7 @@ Vamos criar uma função para registrar rotas e deixar o código mais limpo:
 <?php
 function route($path, $callback) {
     if ($_SERVER['REQUEST_URI'] === $path) {
-        $callback(); // ⟵ Executa o código da rota
+        $callback(); // Executa o código da rota
         exit;
     }
 }
@@ -133,7 +157,14 @@ route('/sobre', function() {
 - Você chama `route('/sobre', function() {...})` para cada rota.
 - Quando a URL bate com o caminho, executa o código dentro da função.
 
-![Organização de rotas](https://i.imgur.com/3Y3Y3Y3.png)
+**Desenho da organização:**
+
+```
+[ Registrar rota /sobre ]
+          |
+          v
+   [ Executar código da rota ]
+```
 
 ### Exercício 4
 - Adicione uma rota `/contato` usando a função route.
@@ -156,7 +187,17 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 - Todas as requisições vão para o `index.php`, que decide qual página mostrar.
 - Assim, você pode acessar `/sobre` ao invés de `/index.php?sobre`.
 
-![URL amigável](https://i.imgur.com/4Z4Z4Z4.png)
+**Desenho do funcionamento:**
+
+```
+[ Você digita /sobre ]
+          |
+          v
+   [ index.php recebe a requisição ]
+          |
+          v
+   [ index.php mostra a Página Sobre ]
+```
 
 ### Exercício 5
 - Crie um arquivo `.htaccess` e teste acessar suas rotas sem o `index.php` na URL.
@@ -178,7 +219,7 @@ $routes = [
 
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 if (isset($routes[$url])) {
-    $routes[$url](); // ⟵ Executa a função da rota
+    $routes[$url](); // Executa a função da rota
 } else {
     echo '404 - Página não encontrada';
 }
@@ -189,7 +230,17 @@ if (isset($routes[$url])) {
 - Acessando `/contato` ⟶ mostra "Contato"
 - Acessando `/qualquercoisa` ⟶ mostra "404 - Página não encontrada"
 
-![Mini sistema de rotas](https://i.imgur.com/5A5A5A5.png)
+**Desenho do mini sistema:**
+
+```
+[ Você digita /sobre ]
+          |
+          v
+   [ Roteador verifica a rota ]
+          |
+          v
+   [ Mostra a Página Sobre ]
+```
 
 ### Exercício 6
 - Adicione uma rota `/login` que exibe "Página de Login".
@@ -224,7 +275,20 @@ Route::get('/sobre', function () {
 - No Laravel, as rotas ficam no arquivo `routes/web.php`.
 - Super simples e poderoso!
 
-![Frameworks PHP](https://i.imgur.com/6B6B6B6.png)
+**Desenho da instalação e uso:**
+
+```
+[ Instalação do Slim/Laravel ]
+          |
+          v
+   [ Criação de rotas fáceis ]
+          |
+          v
+   [ Execução do servidor ]
+          |
+          v
+   [ Acesso às rotas criadas ]
+```
 
 ### Exercício 7
 - Instale o Slim ou Laravel e crie uma rota `/teste` que retorna "Funcionando!".
@@ -241,10 +305,10 @@ Exemplo de middleware simples:
 ```php
 function authMiddleware($callback) {
     if (!isset($_SESSION['user'])) {
-        echo 'Acesso negado'; // ⟵ Bloqueia se não estiver logado
+        echo 'Acesso negado'; // Bloqueia se não estiver logado
         exit;
     }
-    $callback(); // ⟵ Executa a rota se estiver logado
+    $callback(); // Executa a rota se estiver logado
 }
 
 route('/painel', function() {
@@ -258,7 +322,18 @@ route('/painel', function() {
 - Se não estiver logado, ao acessar `/painel` aparece: `Acesso negado`
 - Se estiver logado, aparece: `Bem-vindo ao painel!`
 
-![Middleware](https://i.imgur.com/7C7C7C7.png)
+**Desenho do middleware:**
+
+```
+[ Requisição chega na rota ]
+          |
+          v
+   [ Middleware verifica acesso ]
+          |
+          +--[ Se não logado: Acesso negado ]
+          |
+          +--[ Se logado: Executa a rota ]
+```
 
 ### Exercício 8
 - Implemente um middleware que só permite acesso à rota `/admin` se uma variável `isAdmin` for verdadeira.
