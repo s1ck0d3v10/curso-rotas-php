@@ -38,8 +38,8 @@ Exemplo real:
            [ /sobre ]
 ```
 
-- **Rota**: Caminho da URL (ex: `/contato`)
-- **Handler**: Código que executa quando a rota é acessada
+- **Rota**: Caminho da URL (ex: `/contato`). É o endereço que você digita depois do nome do site.
+- **Handler**: Código que executa quando a rota é acessada. Handler significa "quem lida com aquilo". No PHP, normalmente é uma função.
 
 ### Exercício 1
 - Escreva em um papel ou bloco de notas 3 exemplos de rotas que você já viu em sites reais.
@@ -53,7 +53,7 @@ Vamos criar um arquivo chamado `index.php`:
 
 ```php
 <?php
-// Pega o caminho da URL acessada
+// $_SERVER['REQUEST_URI'] pega o caminho da URL acessada
 if ($_SERVER['REQUEST_URI'] === '/sobre') {
     echo 'Página Sobre'; // Mostra "Página Sobre" se acessar /sobre
 } else if ($_SERVER['REQUEST_URI'] === '/contato') {
@@ -62,6 +62,11 @@ if ($_SERVER['REQUEST_URI'] === '/sobre') {
     echo 'Página Inicial'; // Qualquer outro caminho mostra "Página Inicial"
 }
 ```
+
+**Explicação:**
+- `$_SERVER['REQUEST_URI']` é uma variável do PHP que guarda o caminho da URL que você digitou.
+- O `if` compara esse caminho com as rotas que você quer tratar.
+- O `echo` mostra o texto na tela.
 
 **Exemplo real:**
 - Se você acessar `http://localhost/sobre` ⟶ aparece: `Página Sobre`
@@ -100,13 +105,19 @@ E se quisermos acessar `/usuario/123` e mostrar o usuário 123?
 ```php
 <?php
 $url = $_SERVER['REQUEST_URI'];
-// Verifica se a URL tem o formato /usuario/algum-numero
+// preg_match faz uma busca usando expressão regular
+// Aqui, ele procura por /usuario/ seguido de um número
 if (preg_match('#^/usuario/(\d+)$#', $url, $matches)) {
     echo 'Usuário ID: ' . $matches[1]; // Mostra o ID capturado
 } else {
     echo 'Página não encontrada';
 }
 ```
+
+**Explicação:**
+- `preg_match` é uma função do PHP que procura padrões em textos. Aqui, ela procura URLs do tipo `/usuario/algum-numero`.
+- O `\d+` significa "um ou mais dígitos" (números).
+- Se encontrar, o número vai para `$matches[1]` e é mostrado na tela.
 
 **Exemplo real:**
 - Acessando `http://localhost/usuario/42` ⟶ aparece: `Usuário ID: 42`
@@ -134,28 +145,39 @@ if (preg_match('#^/usuario/(\d+)$#', $url, $matches)) {
 
 ## 4. Organizando rotas com funções
 
-Vamos criar uma função para registrar rotas e deixar o código mais limpo:
+Agora vamos deixar o código mais organizado usando funções. Vamos explicar cada termo:
 
 ```php
 <?php
+// Função que registra uma rota
 function route($path, $callback) {
+    // $path é o caminho da rota, exemplo: '/sobre'
+    // $callback é uma função que será executada se a rota bater
     if ($_SERVER['REQUEST_URI'] === $path) {
         $callback(); // Executa o código da rota
-        exit;
+        exit; // Para o script para não executar outras rotas
     }
 }
 
+// Aqui registramos a rota '/'
 route('/', function() {
     echo 'Home';
 });
+// Aqui registramos a rota '/sobre'
 route('/sobre', function() {
     echo 'Sobre';
 });
 ```
 
-**Como funciona:**
-- Você chama `route('/sobre', function() {...})` para cada rota.
-- Quando a URL bate com o caminho, executa o código dentro da função.
+**Explicação dos termos:**
+- `function route($path, $callback) {...}`: Cria uma função chamada `route`.
+- `$path`: É o caminho da rota (exemplo: `/sobre`).
+- `$callback`: É uma função anônima (sem nome) que será executada se a rota for acessada. Isso é chamado de "callback" porque é uma função que será chamada de volta quando necessário.
+- `route('/sobre', function() {...})`: Aqui você está dizendo: "Quando alguém acessar /sobre, execute este código".
+- `exit;`: Para o PHP de continuar rodando, evitando que outras rotas sejam executadas.
+
+**Analogia:**
+- Imagine que `$path` é o endereço da sua casa e `$callback` é o que você faz quando alguém toca a campainha nesse endereço.
 
 **Desenho da organização:**
 
